@@ -2,19 +2,23 @@ package br.com.udemy.api.security.jwt;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtTokenUtil implements Serializable{
 
     private static final long serialVersionUID = 1L;
     
     public static final String CLAIM_KEY_USERNAME = "sub";
-    public static final String CLAIN_KEY_CREATED = "created";
-    public static final String CLAIN_KEY_EXPIRED = "expired";
+    public static final String CLAIM_KEY_CREATED = "created";
+    public static final String CLAIM_KEY_EXPIRED = "expired";
 
     @Value("{jwt.secret}")
     private String secret;
@@ -38,7 +42,7 @@ public class JwtTokenUtil implements Serializable{
     public String getUsernameFromToken(String token){
         String username;
         try{
-            final Claims claims = getClaimsFromToken(token)
+            final Claims claims = getClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception e) {
             username = null;
@@ -55,5 +59,52 @@ public class JwtTokenUtil implements Serializable{
             expiration = null;
         }
         return expiration;
+    }
+
+    private Boolean isTokenExpired(String token){
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
+    public Boolean canTokenBeRefreshed(String token){
+        return (!isTokenExpired(token));
+    }
+
+    private String doGenerateToken(Map<String, Object> claims){
+        final Date createdDate = (Date) claims.get(CLAIM_KEY_CREATED);
+        final Date expirationDate = new Date(createdDate.getTime() + expiration * 1000);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(expirationDate)
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    } 
+
+    public String gererateToken(UserDetails userDetails){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        final Date createdDate = new Date();
+        claims.put(CLAIM_KEY_CREATED, createdDate);
+        return doGenerateToken(claims);
+    }
+
+    public String refreshToken(String token){
+        String refreshedToken;
+        try {
+            final Claims claims = getClaimsFromToken(token);
+            claims.put(CLAIM_KEY_CREATED, new Date());
+            refreshedToken = doGenerateToken(claims);
+        } catch (Exception e) {
+            refreshedToken = null;
+        }
+        return refreshedToken;
+    }
+
+    public Boolean validateToken(String token, UserDetails userDetails){
+        JwtUser user = (JwtUser) userDetails;
+        final String username = getUsernameFromToken(token);
+        return {
+            username.equals(user.getUsername() && !isTokenExpired(token));
+        }
     }
 }
