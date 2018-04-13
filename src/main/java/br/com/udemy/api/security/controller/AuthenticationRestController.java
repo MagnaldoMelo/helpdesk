@@ -3,6 +3,7 @@ package br.com.udemy.api.security.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,15 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.udemy.api.entity.User;
 import br.com.udemy.api.security.jwt.JwtAuthenticationRequest;
 import br.com.udemy.api.security.jwt.JwtTokenUtil;
+import br.com.udemy.api.security.jwt.WebSecurityConfig;
 import br.com.udemy.api.security.model.CurrentUser;
 import br.com.udemy.api.service.UserService;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthenticationRestController {
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    
+    /*@Autowired
+    private AuthenticationManager authenticationManager;*/
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -39,10 +41,13 @@ public class AuthenticationRestController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value="/api/auth")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
+    @Autowired
+    private WebSecurityConfig webSecurityConfig;
 
-        final Authentication authentication = authenticationManager.authenticate(
+    @PostMapping(value="/api/auth") 
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws Exception {
+
+        final Authentication authentication = webSecurityConfig.authenticationManagerBean().authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getEmail(),
                         authenticationRequest.getPassword()
@@ -50,7 +55,7 @@ public class AuthenticationRestController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-        final String token = jwtTokenUtil.gererateToken(userDetails);
+        final String token = jwtTokenUtil.generateToken(userDetails);
         final User user = userService.findByEmail(authenticationRequest.getEmail());
         user.setPassword(null);
         return ResponseEntity.ok(new CurrentUser(token, user));
