@@ -1,5 +1,7 @@
 package br.com.udemy.api.service.implement;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,11 @@ public class UserServiceImplement implements UserService{
 	public Page<User> findAll(Integer page, Integer count) {
 		Pageable pages = PageRequest.of(page, count);
 		return this.userRepository.findAll(pages);
+	}
+
+	@Override
+	public List<User> findTudo() {
+		return this.userRepository.findAll();
 	}
 
 }

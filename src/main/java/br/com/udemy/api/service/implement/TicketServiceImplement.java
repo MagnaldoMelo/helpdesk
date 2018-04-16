@@ -76,13 +76,13 @@ public class TicketServiceImplement implements TicketService{
 
 	@Override
 	public Page<Ticket> findByNumber(Integer page, Integer count, Integer number) {
-        Pageable pages = PageRequest.of(page, count);
-        return this.ticketRepository.findByNumber(number, pages);
+        	Pageable pages = PageRequest.of(page, count);
+        	return this.ticketRepository.findByNumber(number, pages);
 	}
 
 	@Override
 	public Iterable<Ticket> findall() {
-		return this.ticketRepository.findAll();
+	return this.ticketRepository.findAll();
 	}
 
 	@Override
