@@ -50,7 +50,7 @@ public class UserController{
                 return ResponseEntity.badRequest().body(response);    
             }
             user.setPassword(passwordEnconder.encode(user.getPassword()));
-            User userPersisted = (User) userService.createOrUpdate(user);
+            User userPersisted = userService.createOrUpdate(user);
             response.setData(userPersisted);
         } catch (DuplicateKeyException dE) {
             response.getErrors().add("E-mail already registered");
