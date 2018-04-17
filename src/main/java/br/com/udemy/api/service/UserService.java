@@ -1,7 +1,5 @@
 package br.com.udemy.api.service;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
