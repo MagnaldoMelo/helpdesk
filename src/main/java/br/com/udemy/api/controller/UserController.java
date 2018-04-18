@@ -1,8 +1,5 @@
 package br.com.udemy.api.controller;
 
-import java.util.Collection;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +76,7 @@ public class UserController{
                 return ResponseEntity.badRequest().body(response);
             }
             user.setPassword(passwordEnconder.encode(user.getPassword()));
-            User userPesistente = (User) userService.createOrUpdate(user);
+            User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
         } catch (Exception e) {
             response.getErrors().add(e.getMessage());
