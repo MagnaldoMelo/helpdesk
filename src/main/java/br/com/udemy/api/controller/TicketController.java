@@ -225,12 +225,11 @@ public class TicketController{
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "{id}/{status}")
+    @PutMapping(value = "{id}/{status}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN')")
     public ResponseEntity<Response<Ticket>> changeStatus(HttpServletRequest request, 
                     @PathVariable("id") String id, 
-                    @PathVariable("status") 
-                    String status,
+                    @PathVariable("status") String status,
                     @RequestBody Ticket ticket,
                     BindingResult result){
 
@@ -276,6 +275,7 @@ public class TicketController{
         }
     }
 
+    @GetMapping(value = "/summary")
     public ResponseEntity<Response<Summary>> findSummary(){
         Response<Summary> response = new Response<Summary>();
         Summary summary = new Summary();
