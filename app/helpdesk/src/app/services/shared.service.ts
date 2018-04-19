@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { User } from '../model/user.model';
+import { User } from '../model/user';
 
 @Injectable()
 export class SharedService {
@@ -14,7 +14,7 @@ export class SharedService {
   }
 
   public static getInstance() {
-    if (!this.instance == null) {
+    if (this.instance == null) {
       this.instance = new SharedService();
     }
     return this.instance;
