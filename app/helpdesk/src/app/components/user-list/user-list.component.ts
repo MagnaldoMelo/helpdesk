@@ -19,7 +19,7 @@ export class UserListComponent implements OnInit {
   shared: SharedService;
   message: {};
   classCss: {};
-  ListUser = [];
+  listUser = [];
 
   constructor(
     private dialogService: DialogService,
@@ -27,7 +27,7 @@ export class UserListComponent implements OnInit {
     private router: Router
   ) {
     this.page = 0;
-    this.count = 5;
+    this.count = 2;
   }
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class UserListComponent implements OnInit {
 
   findAll(page: Number, count: Number) {
     this.userService.findAll(page, count).subscribe((responseApi: ResponseApi) => {
-      this.ListUser = responseApi['data']['content'];
+      this.listUser = responseApi['data']['content'];
       this.pages = new Array(responseApi['data']['totalPages']);
 
     }, err => {
