@@ -1,4 +1,4 @@
-import { UserService } from './../../services/user.service';
+import { UserService } from './../../services/user/user.service';
 import { SharedService } from './../../services/shared.service';
 import { Component, OnInit } from '@angular/core';
 import { DialogService } from '../../dialog.service';

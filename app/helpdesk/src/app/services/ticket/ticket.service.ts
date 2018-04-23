@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Ticket } from '../model/ticket';
-import { HELP_DESK_API } from './helpdesk.api';
+import { Ticket } from '../../model/ticket';
+import { HELP_DESK_API } from './../helpdesk.api';
 
 @Injectable()
 export class TicketService {

@@ -1,50 +1,52 @@
-import { Router, ActivatedRoute } from '@angular/router';
-import { TicketService } from './../../services/ticket/ticket.service';
+import { ResponseApi } from './../../model/response-api';
+import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { Ticket } from './../../model/ticket';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Ticket } from '../../model/ticket';
-import { ResponseApi } from '../../model/response-api';
 import { NgForm } from '@angular/forms';
+import { TicketService } from './../../services/ticket/ticket.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'app-ticket-new',
-  templateUrl: './ticket-new.component.html',
-  styleUrls: ['./ticket-new.component.css']
+  selector: 'app-ticket-detail',
+  templateUrl: './ticket-detail.component.html',
+  styleUrls: ['./ticket-detail.component.css']
 })
-export class TicketNewComponent implements OnInit {
+export class TicketDetailComponent implements OnInit {
 
   @ViewChild('form')
   form: NgForm;
 
-  ticket = new Ticket('', null, '', '', '', '', null, null, '', null);
+  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null);
   shared: SharedService;
   message: {};
   classCss: {};
 
   constructor(
     private ticketService: TicketService,
-    private route: ActivatedRoute
-  ) {
-    this.shared = SharedService.getInstance();
+    private route: ActivatedRoute) {
+      this.shared = SharedService.getInstance();
   }
 
   ngOnInit() {
-    const id: String = this.route.snapshot.params['id'];
-
+    const id: string = this.route.snapshot.params['id'];
     if (id !== undefined) {
       this.findById(id);
     }
   }
 
-  findById(id: String) {
+  findById(id: string) {
+    console.log('id --> ', id);
     this.ticketService.findById(id).subscribe((responseApi: ResponseApi) => {
+      console.log('responseApi -->  ', responseApi);
       this.ticket = responseApi.data;
-    } , err => {
-      this.showMessage({
-        type: 'error',
-        text: err['error']['errors'][0]
-      });
+      this.ticket.data = new Date(this.ticket.data).toISOString();
+  } , err => {
+    this.showMessage({
+      type: 'error',
+      text: err['error']['errors'][0]
     });
+  });
   }
 
   register() {
@@ -104,4 +106,20 @@ export class TicketNewComponent implements OnInit {
     }
   }
 
+  changeStatus(status: string): void {
+    this.ticketService.changeStatus(status, this.ticket).subscribe((responseApi: ResponseApi) => {
+        this.ticket = responseApi.data;
+        this.ticket.data = new Date(this.ticket.data).toISOString();
+        this.showMessage({
+          type: 'success',
+          text: 'Successfully changed status'
+        });
+    } , err => {
+      this.showMessage({
+        type: 'error',
+        text: err['error']['errors'][0]
+      });
+    });
+  }
 }
+

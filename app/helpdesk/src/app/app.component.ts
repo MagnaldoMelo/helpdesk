@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SharedService } from './services/shared.service';
-import { UserService } from './services/user.service';
+import { UserService } from './services/user/user.service';
 
 @Component({
   selector: 'app-root',
